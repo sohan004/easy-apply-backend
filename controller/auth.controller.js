@@ -1,7 +1,8 @@
 const forgetPassMail = require("../emailTemplate/forgetPassMail");
 const otpMail = require("../emailTemplate/otpMail");
 const asyncErrorCatcher = require("../middleware/asyncErrorCatcher");
-const { User, Otp, ForgotPassToken } = require("../model");
+const { User, Otp, ForgotPassToken, Template } = require("../model");
+const getFileFullUrl = require("../router/getFileFullUrl");
 const { setCookie, getCookie, clearCookie } = require("../utilities/cookie");
 const {
   generateNewJsonToken,
@@ -131,10 +132,10 @@ module.exports.refreshToken = asyncErrorCatcher(async (req, res) => {
 
 module.exports.getInfo = asyncErrorCatcher(async (req, res) => {
   const id = await req.user.id;
-  const host = req.get("host");
-  const protocol = req.protocol;
   let user = await User.findById(id).select("-password -refreshToken");
-  user["profilePicture"] = `${protocol}://${host}/api/v1/media/${user.profilePicture}`;
+  const totalTemplate = await Template.countDocuments({ user: id });
+  user["profilePicture"] = await getFileFullUrl(req, user.profilePicture);
+  user["totalTemplate"] = totalTemplate;
   res.json({ user, success: true });
 });
 
