@@ -1,7 +1,7 @@
 const forgetPassMail = require("../emailTemplate/forgetPassMail");
 const otpMail = require("../emailTemplate/otpMail");
 const asyncErrorCatcher = require("../middleware/asyncErrorCatcher");
-const { User, Otp, ForgotPassToken, Template } = require("../model");
+const { User, Otp, ForgotPassToken, Template, Mail } = require("../model");
 const getFileFullUrl = require("../router/getFileFullUrl");
 const { setCookie, getCookie, clearCookie } = require("../utilities/cookie");
 const {
@@ -134,8 +134,10 @@ module.exports.getInfo = asyncErrorCatcher(async (req, res) => {
   const id = await req.user.id;
   let user = await User.findById(id).select("-password -refreshToken");
   const totalTemplate = await Template.countDocuments({ user: id });
+  const totalMailSubmitted = await Mail.countDocuments({user: id});
   user["profilePicture"] = await getFileFullUrl(req, user.profilePicture);
   user["totalTemplate"] = totalTemplate;
+  user["totalMailSubmitted"] = totalMailSubmitted;
   res.json({ user, success: true });
 });
 
