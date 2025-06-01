@@ -131,7 +131,10 @@ module.exports.refreshToken = asyncErrorCatcher(async (req, res) => {
 
 module.exports.getInfo = asyncErrorCatcher(async (req, res) => {
   const id = await req.user.id;
-  const user = await User.findById(id).select("-password -refreshToken");
+  const host = req.get("host");
+  const protocol = req.protocol;
+  let user = await User.findById(id).select("-password -refreshToken");
+  user["profilePicture"] = `${protocol}://${host}/api/v1/media/${user.profilePicture}`;
   res.json({ user, success: true });
 });
 
