@@ -161,17 +161,13 @@ module.exports.updateProfile = asyncErrorCatcher(async (req, res) => {
 });
 
 module.exports.forgotPassword = asyncErrorCatcher(async (req, res) => {
-  const userId = await req.user.id;
-  const findUser = await User.findById(userId).select("email");
-  if (!findUser) {
-    return res.status(400).json({ message: "User not found" });
-  }
+  const { email } = await req.body;
   const origin = (await req.headers["origin"]) || (await req.headers["Origin"]);
   const token = await new ForgotPassToken({
     email,
   }).save();
 
-  await forgetPassMail(findUser.email, token._id, origin);
+  await forgetPassMail(email, token._id, origin);
   res.json({
     message: "Password reset link sent to your email",
     success: true,
