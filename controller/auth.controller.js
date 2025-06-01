@@ -135,7 +135,7 @@ module.exports.getInfo = asyncErrorCatcher(async (req, res) => {
   let user = await User.findById(id).select("-password -refreshToken");
   const totalTemplate = await Template.countDocuments({ user: id });
   const totalMailSubmitted = await Mail.countDocuments({user: id});
-  user["profilePicture"] = await getFileFullUrl(req, user.profilePicture);
+  user["profilePicture"] = await getFileFullUrl(req, user?.profilePicture);
   user["totalTemplate"] = totalTemplate;
   user["totalMailSubmitted"] = totalMailSubmitted;
   res.json({ user, success: true });
