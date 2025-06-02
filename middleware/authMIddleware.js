@@ -8,6 +8,9 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ message: "Unauthorize Request" });
     }
     const decode = await verifyToken(token);
+    if (!decode) {
+      return res.status(401).json({ message: "Unauthorize Request" });
+    }
     req.user = decode;
     next();
   } catch (error) {
