@@ -136,9 +136,7 @@ module.exports.getInfo = asyncErrorCatcher(async (req, res) => {
   const totalTemplate = await Template.countDocuments({ user: id });
   const totalMailSubmitted = await Mail.countDocuments({ user: id });
   user["profilePicture"] = await getFileFullUrl(req, user?.profilePicture);
-  user["totalTemplate"] = totalTemplate;
-  user["totalMailSubmitted"] = totalMailSubmitted;
-  res.json({ user, success: true });
+  res.json({ user, success: true, totalTemplate, totalMailSubmitted });
 });
 
 module.exports.updateProfile = asyncErrorCatcher(async (req, res) => {
