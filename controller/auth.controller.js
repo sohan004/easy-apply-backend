@@ -132,7 +132,7 @@ module.exports.refreshToken = asyncErrorCatcher(async (req, res) => {
 
 module.exports.getInfo = asyncErrorCatcher(async (req, res) => {
   const id = await req.user.id;
-  let user = await User.findById(id).select("-password -refreshToken");
+  const user = await User.findById(id).select("-password -refreshToken");
   const totalTemplate = await Template.countDocuments({ user: id });
   const totalMailSubmitted = await Mail.countDocuments({ user: id });
   const userFullProfilePicture = await getFileFullUrl(
@@ -141,7 +141,13 @@ module.exports.getInfo = asyncErrorCatcher(async (req, res) => {
   );
 
   const data = {
-    ...user?.toObject(),
+    name: user?.name,
+    email: user?.email,
+    phone: user?.phone,
+    address: user?.address,
+    emailAppPass: user?.emailAppPass,
+    _id: user?._id,
+    createdAt: user?.createdAt,
     profilePicture: userFullProfilePicture,
     totalTemplate,
     totalMailSubmitted,
