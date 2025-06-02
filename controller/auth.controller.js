@@ -135,11 +135,9 @@ module.exports.getInfo = asyncErrorCatcher(async (req, res) => {
   let user = await User.findById(id).select("-password -refreshToken");
   const totalTemplate = await Template.countDocuments({ user: id });
   const totalMailSubmitted = await Mail.countDocuments({ user: id });
-  const host =  req?.get("host");
-  const protocol =  req?.protocol;
-  user["profilePicture"] = `${protocol}://${host}${user.profilePicture}`;
-  user["totalTemplate"] = totalTemplate;
-  user["totalMailSubmitted"] = totalMailSubmitted;
+  const host = await req?.get("host");
+  const protocol = await req?.protocol;
+  user["profilePicture"] =  getFileFullUrl(req, user?.profilePicture);
   res.json({ user, success: true });
 });
 
